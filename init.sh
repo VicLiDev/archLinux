@@ -4,6 +4,7 @@
 #
 #   ~/.config/hypr -> <仓库>/cfg_hyprland
 #   ~/.config/niri -> <仓库>/cfg_niri
+#   ~/.config/waybar -> <仓库>/cfg_waybar
 #   ~/.config/kitty -> <仓库>/cfg_kitty
 #   ~/.config/bat -> <仓库>/cfg_bat
 #   ~/.config/starship.toml -> <仓库>/cfg_starship.toml
@@ -34,6 +35,7 @@ CONFIG_DIR="${XDG_CONFIG_HOME:-${HOME}/.config}"
 CONFIG_LINKS=(
   "cfg_hyprland:hypr"
   "cfg_niri:niri"
+  "cfg_waybar:waybar"
   "cfg_kitty:kitty"
   "cfg_bat:bat"
   "cfg_starship.toml:starship.toml"
@@ -53,6 +55,7 @@ Usage: ./init.sh [options]
 Symlink repo configs into ~/.config and ~:
   cfg_hyprland       -> ~/.config/hypr
   cfg_niri           -> ~/.config/niri
+  cfg_waybar         -> ~/.config/waybar
   cfg_kitty          -> ~/.config/kitty
   cfg_bat            -> ~/.config/bat
   cfg_starship.toml  -> ~/.config/starship.toml

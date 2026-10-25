@@ -1,0 +1,96 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 34,
+  "spacing": 6,
+  "margin-top": 4,
+  "margin-left": 8,
+  "margin-right": 8,
+  "reload_style_on_change": true,
+  "modules-left": [
+    "niri/workspaces",
+    "niri/window"
+  ],
+  "modules-center": [
+    "clock"
+  ],
+  "modules-right": [
+    "tray",
+    "pulseaudio",
+    "network",
+    "bluetooth",
+    "cpu",
+    "memory"
+  ],
+  "niri/workspaces": {
+    "format": "{icon}",
+    "all-outputs": false,
+    "current-only": false,
+    "disable-click": false,
+    "format-icons": {
+      "default": "●",
+      "focused": "◉",
+      "active": "○",
+      "urgent": "!",
+      "empty": "·"
+    }
+  },
+  "niri/window": {
+    "format": "{title}",
+    "max-length": 60,
+    "separate-outputs": true,
+    "tooltip": false
+  },
+  "clock": {
+    "format": "󰥔 {:%H:%M}",
+    "tooltip-format": "{:%Y-%m-%d %A}",
+    "calendar": {
+      "format": "{:%B %Y}"
+    }
+  },
+  "tray": {
+    "icon-size": 16,
+    "spacing": 8
+  },
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": "󰖁 muted",
+    "format-icons": [
+      "󰕿",
+      "󰖀",
+      "󰕾"
+    ],
+    "scroll-step": 5,
+    "tooltip-format": "{desc}"
+  },
+  "network": {
+    "interval": 5,
+    "format-wifi": "󰤨 {essid}",
+    "format-ethernet": "󰈀 {ifname}",
+    "format-disconnected": "󰤭 offline",
+    "tooltip-format-wifi": "{essid} ({signalStrength}%)\n{ifname} {ipaddr}/{cidr}",
+    "tooltip-format-ethernet": "{ifname}\n{ipaddr}/{cidr}",
+    "tooltip-format-disconnected": "Disconnected"
+  },
+  "bluetooth": {
+    "format": "󰂯",
+    "format-disabled": "󰂲",
+    "format-connected": "󰂱",
+    "format-no-controller": "󰂲",
+    "tooltip-format": "{controller_alias}\n{num_connections} connected",
+    "on-click": "kitty -e bluetoothctl"
+  },
+  "cpu": {
+    "interval": 2,
+    "format": "󰻠 {usage}%",
+    "states": {
+      "warning": 70,
+      "critical": 90
+    }
+  },
+  "memory": {
+    "interval": 5,
+    "format": "󰍛 {used:0.1f}G",
+    "tooltip-format": "{used:0.1f}G / {total:0.1f}G ({percentage}%)"
+  }
+}
