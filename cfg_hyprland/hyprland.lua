@@ -69,8 +69,29 @@ end)
 
 -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Environment-variables/
 
+hl.env("XCURSOR_THEME", "Pop")
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
+
+-- hypr-dynamic-cursors：让指针随移动倾斜、旋转，并支持晃鼠标放大。
+-- 未安装插件时整个配置块会被跳过。
+if hl.plugin and hl.plugin.dynamic_cursors then
+  hl.config({
+    plugin = {
+      dynamic_cursors = {
+        enabled = true,
+        mode = "tilt",
+        tilt = {
+          limit = 3000,
+          full = 60,
+        },
+        shake = {
+          enabled = true,
+        },
+      },
+    },
+  })
+end
 
 
 -----------------------

@@ -84,6 +84,7 @@ COMMON_PKGS=(
   noto-fonts-cjk
   noto-fonts-emoji
   ttf-firacode-nerd
+  pop-icon-theme
   fcitx5
   fcitx5-chinese-addons
   fcitx5-gtk

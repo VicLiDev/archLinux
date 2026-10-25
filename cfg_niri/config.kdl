@@ -106,6 +106,13 @@ input {
     position x=1280 y=0
 }
 
+// niri 没有 Hyprland 的动态光标插件；这里统一光标主题和大小。
+// Hyprland 的倾斜/旋转效果见 cfg_hyprland/hyprland.lua。
+cursor {
+    xcursor-theme "Pop"
+    xcursor-size 24
+}
+
 // Settings that influence how windows are positioned and sized.
 // Find more information on the wiki:
 // https://niri-wm.github.io/niri/Configuration:-Layout
