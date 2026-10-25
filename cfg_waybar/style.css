@@ -1,114 +1,142 @@
-/* Catppuccin Mocha，与 kitty / Starship 的配色保持一致 */
-
 * {
-  font-family: "FiraCode Nerd Font", "Noto Sans CJK SC", sans-serif;
-  font-size: 13px;
-  min-height: 0;
+    font-family: "FiraCode Nerd Font", "Noto Sans CJK SC", sans-serif;
+    font-size: 13px;
+    min-height: 0;
 }
 
 window#waybar {
-  background: rgba(30, 30, 46, 0.9);
-  color: #cdd6f4;
-  border: 1px solid rgba(88, 91, 112, 0.65);
-  border-radius: 12px;
+    background: transparent;
+    color: #cdd6f4;
 }
 
 .modules-left,
 .modules-center,
 .modules-right {
-  margin: 0 8px;
+    background: rgba(30, 30, 46, 0.78);
+    border: 1px solid rgba(88, 91, 112, 0.42);
+    border-radius: 16px;
+    padding: 3px 8px;
+    margin: 6px 4px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+}
+
+.modules-left {
+    margin-left: 10px;
+}
+
+.modules-right {
+    margin-right: 10px;
+}
+
+.modules-center {
+    padding: 3px 14px;
 }
 
 #workspaces button {
-  min-width: 26px;
-  padding: 0 7px;
-  margin: 4px 2px;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
-  color: #a6adc8;
-  transition: background 120ms ease, color 120ms ease;
+    min-width: 28px;
+    padding: 0 6px;
+    margin: 2px 1px;
+    border-radius: 10px;
+    background: transparent;
+    color: #7f849c;
+    transition: all 0.18s ease;
 }
 
 #workspaces button:hover {
-  background: #313244;
-  color: #cdd6f4;
+    background: rgba(69, 71, 90, 0.75);
+    color: #cdd6f4;
 }
 
 #workspaces button.focused {
-  background: #89b4fa;
-  color: #1e1e2e;
+    background: #89b4fa;
+    color: #1e1e2e;
+    box-shadow: 0 0 8px rgba(137, 180, 250, 0.35);
 }
 
 #workspaces button.active {
-  background: #313244;
-  color: #cdd6f4;
+    background: rgba(137, 180, 250, 0.16);
+    color: #89b4fa;
 }
 
 #workspaces button.urgent {
-  background: #f38ba8;
-  color: #1e1e2e;
+    background: #f38ba8;
+    color: #1e1e2e;
 }
 
 #workspaces button.empty {
-  color: #585b70;
+    color: #585b70;
 }
 
 #window {
-  padding: 0 12px;
-  color: #cdd6f4;
+    padding: 0 12px;
+    color: #bac2de;
 }
 
-#clock,
-#tray,
+#clock {
+    padding: 0 12px;
+    color: #74c7ec;
+    font-weight: 700;
+}
+
+#tray {
+    padding: 0 8px;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
 #pulseaudio,
 #network,
 #bluetooth,
 #cpu,
 #memory {
-  padding: 0 10px;
-  margin: 4px 0;
-  border-radius: 8px;
-  background: #313244;
-  color: #cdd6f4;
+    padding: 0 8px;
+    margin: 2px 1px;
+    border-radius: 10px;
+    background: transparent;
+    transition: all 0.18s ease;
 }
 
-#clock {
-  background: #89b4fa;
-  color: #1e1e2e;
-  font-weight: 600;
-}
-
-#tray {
-  padding: 0 8px;
-  background: transparent;
+#pulseaudio:hover,
+#network:hover,
+#bluetooth:hover,
+#cpu:hover,
+#memory:hover {
+    background: rgba(69, 71, 90, 0.65);
 }
 
 #pulseaudio.muted,
 #network.disconnected,
+#network.disabled,
+#bluetooth.disabled,
 #bluetooth.off {
-  color: #f38ba8;
+    color: #f38ba8;
+}
+
+#bluetooth.no-controller {
+    color: #6c7086;
 }
 
 #cpu.warning {
-  color: #f9e2af;
+    color: #f9e2af;
 }
 
 #cpu.critical {
-  color: #f38ba8;
+    color: #f38ba8;
 }
 
 #memory {
-  color: #a6e3a1;
+    color: #a6e3a1;
 }
 
 tooltip {
-  background: #1e1e2e;
-  border: 1px solid #585b70;
-  border-radius: 8px;
+    background: #1e1e2e;
+    border: 1px solid #585b70;
+    border-radius: 8px;
 }
 
 tooltip label {
-  color: #cdd6f4;
-  padding: 6px;
+    padding: 6px 8px;
+    color: #cdd6f4;
 }
