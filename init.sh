@@ -4,8 +4,13 @@
 #
 #   ~/.config/hypr -> <仓库>/cfg_hyprland
 #   ~/.config/niri -> <仓库>/cfg_niri
+#   ~/.config/kitty -> <仓库>/cfg_kitty
+#   ~/.config/bat -> <仓库>/cfg_bat
+#   ~/.config/starship.toml -> <仓库>/cfg_starship.toml
+#   ~/.config/environment.d/10-fcitx5.conf -> <仓库>/cfg_environment.d/10-fcitx5.conf
+#   ~/.zshrc -> <仓库>/cfg_zshrc
 #
-# 之后所有修改都直接改仓库里的文件，两个合成器看到的永远是同一份。
+# 之后所有修改都直接改仓库里的文件，各程序看到的永远是同一份。
 # 重复执行是安全的：已指向本仓库的软链会原样保留。
 
 # -e：任何命令以非 0 退出时立即终止脚本，避免错误被后续步骤掩盖
@@ -25,10 +30,19 @@ source "${LOG_LIB}"
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 CONFIG_DIR="${XDG_CONFIG_HOME:-${HOME}/.config}"
 
-# 仓库目录名:用户配置目录名
-LINKS=(
+# 仓库路径:目标名，链接到 ${CONFIG_DIR}
+CONFIG_LINKS=(
   "cfg_hyprland:hypr"
   "cfg_niri:niri"
+  "cfg_kitty:kitty"
+  "cfg_bat:bat"
+  "cfg_starship.toml:starship.toml"
+  "cfg_environment.d/10-fcitx5.conf:environment.d/10-fcitx5.conf"
+)
+
+# 仓库路径:目标名，链接到 ${HOME}
+HOME_LINKS=(
+  "cfg_zshrc:.zshrc"
 )
 
 function usage()
@@ -36,7 +50,15 @@ function usage()
   cat <<'EOF'
 Usage: ./init.sh [options]
 
-Symlink cfg_hyprland / cfg_niri to ~/.config/hypr and ~/.config/niri.
+Symlink repo configs into ~/.config and ~:
+  cfg_hyprland       -> ~/.config/hypr
+  cfg_niri           -> ~/.config/niri
+  cfg_kitty          -> ~/.config/kitty
+  cfg_bat            -> ~/.config/bat
+  cfg_starship.toml  -> ~/.config/starship.toml
+  cfg_environment.d/10-fcitx5.conf
+                     -> ~/.config/environment.d/10-fcitx5.conf
+  cfg_zshrc          -> ~/.zshrc
 
 Options:
   -h, --help      Show this help
@@ -45,14 +67,16 @@ EOF
 
 function link_one()
 {
-  local source="${1}" name="${2}"
-  local target="${CONFIG_DIR}/${name}"
+  local source="${1}" target="${2}"
+  local target_dir
 
-  if [[ ! -d "${source}" ]]; then
-    log_fail "source directory not found: ${source}"
+  if [[ ! -e "${source}" ]]; then
+    log_fail "source not found: ${source}"
     exit 1
   fi
-  mkdir -p -- "${CONFIG_DIR}"
+
+  target_dir="$(dirname -- "${target}")"
+  mkdir -p -- "${target_dir}"
 
   if [[ -L "${target}" ]]; then
     local current
@@ -88,11 +112,15 @@ function main()
   log "Repository: ${SCRIPT_DIR}"
   log "Config dir: ${CONFIG_DIR}"
 
-  for pair in "${LINKS[@]}"; do
-    link_one "${SCRIPT_DIR}/${pair%%:*}" "${pair##*:}"
+  for pair in "${CONFIG_LINKS[@]}"; do
+    link_one "${SCRIPT_DIR}/${pair%%:*}" "${CONFIG_DIR}/${pair##*:}"
   done
 
-  log "Done. Changes under ${SCRIPT_DIR}/cfg_hyprland or cfg_niri take effect immediately."
+  for pair in "${HOME_LINKS[@]}"; do
+    link_one "${SCRIPT_DIR}/${pair%%:*}" "${HOME}/${pair##*:}"
+  done
+
+  log "Done. Linked configs take effect immediately."
 }
 
 main "${@}"

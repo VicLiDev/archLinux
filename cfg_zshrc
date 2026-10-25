@@ -1,0 +1,227 @@
+# ~/.zshrc
+
+# 只在交互式 shell 中加载；脚本或非交互调用直接返回
+[[ -o interactive ]] || return 0
+
+# ------------------------------------------------------------
+# 历史记录
+# ------------------------------------------------------------
+HISTFILE="${HOME}/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=50000
+
+setopt EXTENDED_HISTORY
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_VERIFY
+setopt SHARE_HISTORY
+
+# 上下方向键按当前输入的前缀过滤历史，而不是遍历全部历史
+# 连续上翻时保留第一次的前缀，例如 "cd Pro" 不会在第二次变成整条命令
+typeset -g _history_prefix=''
+typeset -g _history_last_buffer=''
+typeset -g _history_original=''
+
+function _history_search_reset()
+{
+  _history_prefix=''
+  _history_last_buffer=''
+  _history_original=''
+}
+
+function _history_search_prepare()
+{
+  if [[ "${BUFFER}" != "${_history_last_buffer}" ]]; then
+    _history_prefix="${BUFFER[1,CURSOR]}"
+    _history_original="${BUFFER}"
+  fi
+
+  # 只把光标移到前缀末尾，保留 BUFFER 和 zsh 的历史搜索位置；
+  # 直接改写 BUFFER 会让 history-beginning-search-forward 找不到下一条。
+  CURSOR=${#_history_prefix}
+}
+
+function _history_search_backward()
+{
+  _history_search_prepare
+  zle history-beginning-search-backward
+  _history_last_buffer="${BUFFER}"
+  CURSOR=${#BUFFER}
+  POSTDISPLAY=''
+}
+
+function _history_search_forward()
+{
+  _history_search_prepare
+  zle history-beginning-search-forward
+
+  if [[ "${BUFFER}" == "${_history_prefix}" ]]; then
+    BUFFER="${_history_original}"
+    _history_last_buffer=''
+  else
+    _history_last_buffer="${BUFFER}"
+  fi
+
+  CURSOR=${#BUFFER}
+  POSTDISPLAY=''
+}
+
+zle -N _history_search_backward
+zle -N _history_search_forward
+bindkey '^[[A' _history_search_backward
+bindkey '^[[B' _history_search_forward
+bindkey '^[OA' _history_search_backward
+bindkey '^[OB' _history_search_forward
+
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd _history_search_reset
+
+# ------------------------------------------------------------
+# 补全
+# ------------------------------------------------------------
+zcompdump="${XDG_CACHE_HOME:-${HOME}/.cache}/zsh/zcompdump-${HOST}-${ZSH_VERSION}"
+mkdir -p -- "${zcompdump:h}/zcompcache"
+
+autoload -Uz compinit
+compinit -d "${zcompdump}"
+
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path "${zcompdump:h}/zcompcache"
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' list-prompt '%SAt %p: TAB for more, any other key to insert%s'
+
+setopt AUTO_CD
+setopt AUTO_MENU
+setopt AUTO_PUSHD
+setopt PUSHD_IGNORE_DUPS
+setopt INTERACTIVE_COMMENTS
+setopt COMPLETE_IN_WORD
+setopt ALWAYS_TO_END
+
+# ------------------------------------------------------------
+# 原有 bash 工具
+# ------------------------------------------------------------
+if [[ -r "${HOME}/bin/_source_cmd_tools.sh" ]]; then
+  source "${HOME}/bin/_source_cmd_tools.sh"
+fi
+
+# ------------------------------------------------------------
+# fzf：Ctrl-R / Ctrl-T / Alt-C
+# ------------------------------------------------------------
+if [[ -r /usr/share/fzf/key-bindings.zsh ]]; then
+  source /usr/share/fzf/key-bindings.zsh
+fi
+if [[ -r /usr/share/fzf/completion.zsh ]]; then
+  source /usr/share/fzf/completion.zsh
+fi
+
+# ------------------------------------------------------------
+# 自动建议
+# ------------------------------------------------------------
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=8'
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+if [[ -r /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+  source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
+
+# 历史搜索组件自己清理 POSTDISPLAY，禁止自动建议再包一层
+ZSH_AUTOSUGGEST_IGNORE_WIDGETS+=(_history_search_backward _history_search_forward)
+
+# 右方向键优先接受灰色建议；没有建议时保持正常的右移
+function _accept_autosuggest_or_forward_char()
+{
+  if [[ -n "${POSTDISPLAY}" ]]; then
+    zle autosuggest-accept
+  else
+    zle forward-char
+  fi
+}
+zle -N _accept_autosuggest_or_forward_char
+bindkey '^[[C' _accept_autosuggest_or_forward_char
+bindkey '^[OC' _accept_autosuggest_or_forward_char
+
+# ------------------------------------------------------------
+# 目录跳转与提示符
+# ------------------------------------------------------------
+if (( ${+commands[zoxide]} )); then
+  eval "$(zoxide init zsh)"
+fi
+
+if (( ${+commands[starship]} )); then
+  eval "$(starship init zsh)"
+fi
+
+# ------------------------------------------------------------
+# 分页器与 fzf 配色
+# ------------------------------------------------------------
+export PAGER='less'
+export MANPAGER='less -R'
+export LESS='-R'
+
+# less 的 man 页配色，尽量接近 Catppuccin Mocha
+export LESS_TERMCAP_mb=$'\e[1;31m'
+export LESS_TERMCAP_md=$'\e[1;34m'
+export LESS_TERMCAP_me=$'\e[0m'
+export LESS_TERMCAP_se=$'\e[0m'
+export LESS_TERMCAP_so=$'\e[1;33;44m'
+export LESS_TERMCAP_ue=$'\e[0m'
+export LESS_TERMCAP_us=$'\e[1;32m'
+
+# fzf 使用 Catppuccin Mocha 色板
+export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border \
+  --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
+  --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
+  --color=marker:#a6e3a1,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8"
+
+# ------------------------------------------------------------
+# 常用别名
+# ------------------------------------------------------------
+if (( ${+commands[eza]} )); then
+  alias ls='eza --icons --group-directories-first'
+  alias ll='eza -lh --icons --git'
+  alias la='eza -lah --icons --git'
+  alias lt='eza --tree --level=2 --icons'
+fi
+
+if (( ${+commands[bat]} )); then
+  alias cat='bat --style=plain --paging=never'
+fi
+
+# ------------------------------------------------------------
+# 语法高亮必须最后加载
+# ------------------------------------------------------------
+if [[ -r /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/lhj/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/lhj/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/lhj/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/lhj/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+# ======================================================
+# =========== Personal configuration ===================
+# ======================================================
+# ======> my tools and config
+# export GIT_SSH_PORT=443
+# proxyIP=<your_proxy_ip>
+# proxyPort=<your_proxy_port>
+# export proxyMihomoAddr=127.0.0.1:9090
+# export proxyMihomoCfgDir=${HOME}/.config/mihomo
+# export proxyMihomoBin=${HOME}/.local/bin/mihomo
+# export ANDROID_ADB_SERVER_PORT=<adb_port>
+#-- export ADB_SERVER_SOCKET=tcp:127.0.0.1:<port>
+source /home/lhj/bin/_source_cmd_tools.sh
