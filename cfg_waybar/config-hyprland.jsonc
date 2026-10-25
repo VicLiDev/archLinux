@@ -23,7 +23,7 @@
     "memory"
   ],
   "clock": {
-    "format": "󰥔 {:%H:%M}",
+    "format": "󰥔 {:%m/%d %H:%M}",
     "tooltip-format": "{:%Y-%m-%d %A}",
     "calendar": {
       "format": "{:%B %Y}"
