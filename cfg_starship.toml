@@ -24,11 +24,10 @@ $python\
 [](fg:green bg:sapphire)\
 $conda\
 [ ](fg:sapphire)\
-$cmd_duration\
 $line_break\
 $character"""
 
-right_format = '[](fg:lavender)$time[ ](fg:lavender)'
+right_format = '[](fg:lavender)$cmd_duration$time[ ](fg:lavender)'
 
 palette = 'catppuccin_mocha'
 
@@ -181,8 +180,8 @@ vimcmd_visual_symbol = '[❮](bold fg:yellow)'
 
 [cmd_duration]
 show_milliseconds = true
-format = " in $duration "
-style = "bg:lavender"
+format = '[ in $duration]($style)'
+style = "fg:crust bg:lavender"
 disabled = false
 show_notifications = true
 min_time_to_notify = 45000
