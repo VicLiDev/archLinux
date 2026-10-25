@@ -110,6 +110,9 @@ input {
 // Find more information on the wiki:
 // https://niri-wm.github.io/niri/Configuration:-Layout
 layout {
+    // Niri's own background color; visible when no wallpaper is drawn.
+    background-color "#1e1e2e"
+
     // Set gaps around windows in logical pixels.
     gaps 16
 
@@ -269,6 +272,7 @@ layout {
 
 // Start Waybar with the niri-specific config; style.css is shared.
 spawn-sh-at-startup "waybar -c ~/.config/waybar/config-niri.jsonc -s ~/.config/waybar/style.css"
+spawn-sh-at-startup "swaybg -i ~/Pictures/wallpapers/cur_bkgrd.jpg -m fill"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"

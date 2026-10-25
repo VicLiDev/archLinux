@@ -23,6 +23,8 @@ if [[ ! -r "${LOG_LIB}" ]]; then
 fi
 source "${LOG_LIB}"
 
+WALLPAPER_DIR="${HOME}/Pictures/wallpapers"
+
 # 两套桌面共用的桌面基础软件
 COMMON_PKGS=(
   # 终端、shell 与常用命令行工具
@@ -108,6 +110,59 @@ HYPRLAND_PKGS=(
   hyprpicker
 )
 
+function download_wallpapers()
+{
+  local index name target id
+  local names=(
+    01-alpine-lake.jpg
+    02-forest-sunlight.jpg
+    03-foggy-mountains.jpg
+    04-mountain-peak.jpg
+    05-valley.jpg
+    06-green-hills.jpg
+    07-snow-mountain.jpg
+    08-forest-path.jpg
+  )
+  local ids=(
+    photo-1501785888041-af3ef285b470
+    photo-1441974231531-c6227db76b6e
+    photo-1470071459604-3b5ec3a7fe05
+    photo-1464822759023-fed622ff2c3b
+    photo-1469474968028-56623f02e42e
+    photo-1472214103451-9374bd1c798e
+    photo-1500534623283-312aade485b7
+    photo-1447752875215-b2761acb3c5d
+  )
+
+  mkdir -p -- "${WALLPAPER_DIR}"
+
+  for index in "${!names[@]}"; do
+    name="${names[${index}]}"
+    target="${WALLPAPER_DIR}/${name}"
+
+    if [[ -s "${target}" ]]; then
+      log "Wallpaper already exists: ${name}"
+      continue
+    fi
+
+    id="${ids[${index}]}"
+    log "Downloading wallpaper: ${name}"
+    if ! curl -L --fail --silent --show-error --retry 1 --max-time 120 \
+        -o "${target}" \
+        "https://images.unsplash.com/${id}?w=2560&q=85&fm=jpg&fit=crop"; then
+      log_warn "failed to download wallpaper: ${name}"
+      rm -f -- "${target}"
+    fi
+  done
+
+  if [[ -s "${WALLPAPER_DIR}/01-alpine-lake.jpg" ]] \
+      && [[ ! -e "${WALLPAPER_DIR}/cur_bkgrd.jpg" ]] \
+      && [[ ! -L "${WALLPAPER_DIR}/cur_bkgrd.jpg" ]]; then
+    ln -s -- "01-alpine-lake.jpg" "${WALLPAPER_DIR}/cur_bkgrd.jpg"
+    log "Created wallpaper symlink: cur_bkgrd.jpg -> 01-alpine-lake.jpg"
+  fi
+}
+
 function usage()
 {
   cat <<'EOF'
@@ -158,6 +213,7 @@ function main()
   require_command sudo
   require_command pacman
   require_command systemctl
+  require_command curl
 
   # 先刷新 sudo 时间戳，后面的 pacman 和 systemctl 不再反复询问密码
   if ! sudo -v; then
@@ -172,6 +228,8 @@ function main()
     return 1
   fi
   log_pass "Hyprland desktop packages installed."
+
+  download_wallpapers
 
   log "Setting graphical.target as the default boot target..."
   if ! sudo systemctl set-default graphical.target; then

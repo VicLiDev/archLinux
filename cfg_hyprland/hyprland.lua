@@ -52,6 +52,7 @@ local menu           = "hyprlauncher"
 --
 hl.on("hyprland.start", function ()
   hl.exec_cmd("waybar -c ~/.config/waybar/config-hyprland.jsonc -s ~/.config/waybar/style.css")
+  hl.exec_cmd("swaybg -i ~/Pictures/wallpapers/cur_bkgrd.jpg -m fill")
 end)
 
 -- hl.on("hyprland.start", function () 
