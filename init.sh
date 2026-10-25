@@ -13,6 +13,11 @@
 #   ~/.config/bat -> <仓库>/cfg_bat
 #   ~/.config/starship.toml -> <仓库>/cfg_starship.toml
 #   ~/.config/environment.d/10-fcitx5.conf -> <仓库>/cfg_environment.d/10-fcitx5.conf
+#   ~/.config/fcitx5/profile -> <仓库>/cfg_fcitx5/profile
+#   ~/.config/fcitx5/conf/classicui.conf -> <仓库>/cfg_fcitx5/conf/classicui.conf
+#   ~/.config/fcitx5/conf/pinyin.conf -> <仓库>/cfg_fcitx5/conf/pinyin.conf
+#   ~/.local/share/fcitx5/themes/Alpha-black
+#                       -> <仓库>/cfg_fcitx5/themes/Alpha-black
 #   ~/.zshrc -> <仓库>/cfg_zshrc
 #
 # 之后所有修改都直接改仓库里的文件，各程序看到的永远是同一份。
@@ -46,12 +51,16 @@ CONFIG_LINKS=(
   "cfg_bat:bat"
   "cfg_starship.toml:starship.toml"
   "cfg_environment.d/10-fcitx5.conf:environment.d/10-fcitx5.conf"
+  "cfg_fcitx5/profile:fcitx5/profile"
+  "cfg_fcitx5/conf/classicui.conf:fcitx5/conf/classicui.conf"
+  "cfg_fcitx5/conf/pinyin.conf:fcitx5/conf/pinyin.conf"
 )
 
 # 仓库路径:目标名，链接到 ${HOME}
 HOME_LINKS=(
   "cfg_zshrc:.zshrc"
   "cfg_dolphin/open-terminal.desktop:.local/share/kio/servicemenus/open-terminal.desktop"
+  "cfg_fcitx5/themes/Alpha-black:.local/share/fcitx5/themes/Alpha-black"
 )
 
 function usage()
@@ -73,6 +82,13 @@ Symlink repo configs into ~/.config and ~:
   cfg_starship.toml  -> ~/.config/starship.toml
   cfg_environment.d/10-fcitx5.conf
                      -> ~/.config/environment.d/10-fcitx5.conf
+  cfg_fcitx5/profile -> ~/.config/fcitx5/profile
+  cfg_fcitx5/conf/classicui.conf
+                     -> ~/.config/fcitx5/conf/classicui.conf
+  cfg_fcitx5/conf/pinyin.conf
+                     -> ~/.config/fcitx5/conf/pinyin.conf
+  cfg_fcitx5/themes/Alpha-black
+                     -> ~/.local/share/fcitx5/themes/Alpha-black
   cfg_zshrc          -> ~/.zshrc
 
 Options:

@@ -89,6 +89,7 @@ COMMON_PKGS=(
   fcitx5-gtk
   fcitx5-qt
   fcitx5-configtool
+  fcitx5-nord
 
   # 认证、portal、Qt 与显示管理器
   polkit-gnome
