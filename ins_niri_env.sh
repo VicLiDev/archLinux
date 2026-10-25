@@ -59,6 +59,13 @@ COMMON_PKGS=(
   ffmpegthumbnailer
   file-roller
 
+  # 文件搜索
+  fsearch
+
+  # 浏览器、编辑器与笔记
+  code
+  obsidian
+
   # 截图、剪贴板、亮度、媒体控制
   grim
   slurp
@@ -109,6 +116,11 @@ NIRI_PKGS=(
   swaybg
   swaylock
   swayidle
+)
+
+# 只能从 AUR 获取的软件
+AUR_PKGS=(
+  google-chrome
 )
 
 function download_wallpapers()
@@ -229,6 +241,27 @@ function main()
     return 1
   fi
   log_pass "niri desktop packages installed."
+
+  if ((${#AUR_PKGS[@]} > 0)); then
+    local aur_helper=""
+
+    if command -v paru >/dev/null 2>&1; then
+      aur_helper="paru"
+    elif command -v yay >/dev/null 2>&1; then
+      aur_helper="yay"
+    fi
+
+    if [[ -z "${aur_helper}" ]]; then
+      log_warn "AUR helper not found; install manually: ${AUR_PKGS[*]}"
+    else
+      log "Installing AUR packages with ${aur_helper}..."
+      if ! "${aur_helper}" -S --needed --noconfirm "${AUR_PKGS[@]}"; then
+        log_fail "failed to install AUR packages"
+        return 1
+      fi
+      log_pass "AUR packages installed."
+    fi
+  fi
 
   download_wallpapers
 

@@ -425,6 +425,7 @@ binds {
     Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
     Mod+E hotkey-overlay-title="Open a File Manager: thunar" { spawn "thunar"; }
     Mod+Ctrl+E hotkey-overlay-title="Open a File Manager: dolphin" { spawn "dolphin"; }
+    Mod+Alt+F hotkey-overlay-title="Search Files: fsearch" { spawn "fsearch"; }
     Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
