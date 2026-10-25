@@ -5,6 +5,10 @@
 #   ~/.config/hypr -> <仓库>/cfg_hyprland
 #   ~/.config/niri -> <仓库>/cfg_niri
 #   ~/.config/waybar -> <仓库>/cfg_waybar
+#   ~/.config/Thunar -> <仓库>/cfg_thunar
+#   ~/.config/dolphinrc -> <仓库>/cfg_dolphin/dolphinrc
+#   ~/.local/share/kio/servicemenus/open-terminal.desktop
+#                       -> <仓库>/cfg_dolphin/open-terminal.desktop
 #   ~/.config/kitty -> <仓库>/cfg_kitty
 #   ~/.config/bat -> <仓库>/cfg_bat
 #   ~/.config/starship.toml -> <仓库>/cfg_starship.toml
@@ -36,6 +40,8 @@ CONFIG_LINKS=(
   "cfg_hyprland:hypr"
   "cfg_niri:niri"
   "cfg_waybar:waybar"
+  "cfg_thunar:Thunar"
+  "cfg_dolphin/dolphinrc:dolphinrc"
   "cfg_kitty:kitty"
   "cfg_bat:bat"
   "cfg_starship.toml:starship.toml"
@@ -45,6 +51,7 @@ CONFIG_LINKS=(
 # 仓库路径:目标名，链接到 ${HOME}
 HOME_LINKS=(
   "cfg_zshrc:.zshrc"
+  "cfg_dolphin/open-terminal.desktop:.local/share/kio/servicemenus/open-terminal.desktop"
 )
 
 function usage()
@@ -56,6 +63,11 @@ Symlink repo configs into ~/.config and ~:
   cfg_hyprland       -> ~/.config/hypr
   cfg_niri           -> ~/.config/niri
   cfg_waybar         -> ~/.config/waybar
+  cfg_thunar         -> ~/.config/Thunar
+  cfg_dolphin/dolphinrc
+                     -> ~/.config/dolphinrc
+  cfg_dolphin/open-terminal.desktop
+                     -> ~/.local/share/kio/servicemenus/open-terminal.desktop
   cfg_kitty          -> ~/.config/kitty
   cfg_bat            -> ~/.config/bat
   cfg_starship.toml  -> ~/.config/starship.toml

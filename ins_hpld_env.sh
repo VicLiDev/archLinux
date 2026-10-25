@@ -46,6 +46,17 @@ COMMON_PKGS=(
   mako
   fuzzel
 
+  # 文件管理器与桌面集成
+  dolphin
+  thunar
+  thunar-volman
+  gvfs
+  gvfs-mtp
+  udisks2
+  tumbler
+  ffmpegthumbnailer
+  file-roller
+
   # 截图、剪贴板、亮度、媒体控制
   grim
   slurp
