@@ -1,0 +1,24 @@
+image=/home/lhj/Pictures/wallpapers/cur_bkgrd.jpg
+scaling=fill
+color=1e1e2e
+font=FiraCode Nerd Font
+font-size=28
+indicator-radius=140
+indicator-thickness=12
+indicator-idle-visible
+show-failed-attempts
+inside-color=1e1e2eff
+inside-ver-color=313244ff
+inside-wrong-color=f38ba8ff
+ring-color=f9e2af
+ring-ver-color=a6e3a1
+ring-wrong-color=f38ba8
+line-color=1e1e2e00
+line-ver-color=a6e3a1ff
+line-wrong-color=f38ba8ff
+separator-color=00000000
+text-color=cdd6f4
+text-ver-color=cdd6f4
+text-wrong-color=f38ba8
+key-hl-color=89b4fa
+bs-hl-color=f38ba8

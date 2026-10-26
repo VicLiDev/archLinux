@@ -12,6 +12,7 @@
 #   ~/.config/kitty -> <仓库>/cfg_kitty
 #   ~/.config/bat -> <仓库>/cfg_bat
 #   ~/.config/starship.toml -> <仓库>/cfg_starship.toml
+#   ~/.config/swaylock -> <仓库>/cfg_swaylock
 #   ~/.config/environment.d/10-fcitx5.conf -> <仓库>/cfg_environment.d/10-fcitx5.conf
 #   ~/.config/fcitx5/profile -> <仓库>/cfg_fcitx5/profile
 #   ~/.config/fcitx5/conf/classicui.conf -> <仓库>/cfg_fcitx5/conf/classicui.conf
@@ -50,6 +51,7 @@ CONFIG_LINKS=(
   "cfg_kitty:kitty"
   "cfg_bat:bat"
   "cfg_starship.toml:starship.toml"
+  "cfg_swaylock:swaylock"
   "cfg_environment.d/10-fcitx5.conf:environment.d/10-fcitx5.conf"
   "cfg_fcitx5/profile:fcitx5/profile"
   "cfg_fcitx5/conf/classicui.conf:fcitx5/conf/classicui.conf"
@@ -80,6 +82,7 @@ Symlink repo configs into ~/.config and ~:
   cfg_kitty          -> ~/.config/kitty
   cfg_bat            -> ~/.config/bat
   cfg_starship.toml  -> ~/.config/starship.toml
+  cfg_swaylock       -> ~/.config/swaylock
   cfg_environment.d/10-fcitx5.conf
                      -> ~/.config/environment.d/10-fcitx5.conf
   cfg_fcitx5/profile -> ~/.config/fcitx5/profile
