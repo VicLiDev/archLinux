@@ -219,9 +219,11 @@ unset __conda_setup
 # export GIT_SSH_PORT=443
 # proxyIP=<your_proxy_ip>
 # proxyPort=<your_proxy_port>
+# Chrome 代理请另外写入 ~/.config/chrome-flags.conf（--proxy-server=http://主机:端口）
 # export proxyMihomoAddr=127.0.0.1:9090
 # export proxyMihomoCfgDir=${HOME}/.config/mihomo
 # export proxyMihomoBin=${HOME}/.local/bin/mihomo
 # export ANDROID_ADB_SERVER_PORT=<adb_port>
 #-- export ADB_SERVER_SOCKET=tcp:127.0.0.1:<port>
-source /home/lhj/bin/_source_cmd_tools.sh
+source ${HOME}/bin/_source_cmd_tools.sh
+[ -f ${HOME}/bin/pers_cfg.sh ] && source ${HOME}/bin/pers_cfg.sh
