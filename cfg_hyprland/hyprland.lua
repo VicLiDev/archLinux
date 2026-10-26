@@ -298,7 +298,7 @@ hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + CTRL + E", hl.dsp.exec_cmd(fileManagerAlt))
 hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(fileSearch))
-hl.bind(mainMod .. " + ALT + L", hl.dsp.exec_cmd("hyprlock"))
+hl.bind(mainMod .. " + ALT + L", hl.dsp.exec_cmd("$HOME/.config/hypr/lock-and-dpms.sh"))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
