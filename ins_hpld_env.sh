@@ -23,6 +23,7 @@ if [[ ! -r "${LOG_LIB}" ]]; then
 fi
 source "${LOG_LIB}"
 
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 WALLPAPER_DIR="${HOME}/Pictures/wallpapers"
 
 # 两套桌面共用的桌面基础软件
@@ -104,6 +105,8 @@ COMMON_PKGS=(
   xdg-desktop-portal-gtk
   xdg-utils
   qt5-wayland
+  qt5-quickcontrols2
+  qt5-svg
   qt6-wayland
   sddm
 )
@@ -266,6 +269,12 @@ function main()
   fi
 
   download_wallpapers
+
+  log "Installing the SDDM Catppuccin login theme..."
+  if ! "${SCRIPT_DIR}/ins_sddm_theme.sh"; then
+    log_fail "failed to install the SDDM Catppuccin login theme"
+    return 1
+  fi
 
   log "Setting graphical.target as the default boot target..."
   if ! sudo systemctl set-default graphical.target; then
