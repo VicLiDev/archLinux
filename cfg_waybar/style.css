@@ -73,9 +73,11 @@ window#waybar {
 }
 
 #clock {
-    padding: 0 12px;
-    color: #74c7ec;
-    font-weight: 700;
+    padding: 0 14px;
+    color: #f9e2af;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
 }
 
 #tray {
