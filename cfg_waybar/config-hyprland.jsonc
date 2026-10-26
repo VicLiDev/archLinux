@@ -51,7 +51,8 @@
     "format-disconnected": "󰤭 offline",
     "tooltip-format-wifi": "{essid} ({signalStrength}%)\n{ifname} {ipaddr}/{cidr}",
     "tooltip-format-ethernet": "{ifname}\n{ipaddr}/{cidr}",
-    "tooltip-format-disconnected": "Disconnected"
+    "tooltip-format-disconnected": "Disconnected",
+    "on-click": "kitty -e nmtui"
   },
   "bluetooth": {
     "format": "󰂯",
@@ -59,7 +60,7 @@
     "format-connected": "󰂱",
     "format-no-controller": "󰂲",
     "tooltip-format": "{controller_alias}\n{num_connections} connected",
-    "on-click": "kitty -e bluetoothctl"
+    "on-click": "blueman-manager"
   },
   "cpu": {
     "interval": 2,

@@ -84,8 +84,10 @@ COMMON_PKGS=(
 
   # 网络与蓝牙
   networkmanager
+  network-manager-applet
   bluez
   bluez-utils
+  blueman
 
   # 中文字体、等宽字体与输入法
   noto-fonts
@@ -246,6 +248,17 @@ function main()
     return 1
   fi
   log_pass "Hyprland desktop packages installed."
+
+  log "Enabling NetworkManager and Bluetooth services..."
+  if ! sudo systemctl enable --now NetworkManager; then
+    log_fail "failed to enable NetworkManager"
+    return 1
+  fi
+  if ! sudo systemctl enable --now bluetooth; then
+    log_fail "failed to enable bluetooth"
+    return 1
+  fi
+  log_pass "NetworkManager and Bluetooth services enabled."
 
   if ((${#AUR_PKGS[@]} > 0)); then
     local aur_helper=""
