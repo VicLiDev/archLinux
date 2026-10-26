@@ -281,6 +281,7 @@ layout {
 spawn-sh-at-startup "waybar -c ~/.config/waybar/config-niri.jsonc -s ~/.config/waybar/style.css"
 spawn-sh-at-startup "swaybg -i ~/Pictures/wallpapers/cur_bkgrd.jpg -m fill"
 spawn-sh-at-startup "fcitx5 -d"
+spawn-sh-at-startup "swayidle -w -C ~/.config/niri/swayidle.conf"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
