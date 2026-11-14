@@ -525,8 +525,11 @@ binds {
     Mod+Q repeat=false { close-window; }
 
     Mod+Left  { focus-column-left; }
-    Mod+Down  { focus-window-down; }
-    Mod+Up    { focus-window-up; }
+
+    // 上下方向键切换工作区；窗口内的上下聚焦继续用 J/K。
+    Mod+Down  { focus-workspace-down; }
+    Mod+Up    { focus-workspace-up; }
+
     Mod+Right { focus-column-right; }
     Mod+H     { focus-column-left; }
     Mod+J     { focus-window-down; }
@@ -580,6 +583,7 @@ binds {
     // Mod+Shift+Ctrl+Left  { move-workspace-to-monitor-left; }
     // ...
 
+    // PageUp/PageDown 保留为工作区切换的兼容快捷键。
     Mod+Page_Down      { focus-workspace-down; }
     Mod+Page_Up        { focus-workspace-up; }
     Mod+U              { focus-workspace-down; }
