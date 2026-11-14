@@ -487,6 +487,7 @@ binds {
     Mod+E hotkey-overlay-title="Open a File Manager: thunar" { spawn "thunar"; }
     Mod+Ctrl+E hotkey-overlay-title="Open a File Manager: dolphin" { spawn "dolphin"; }
     Mod+Alt+F hotkey-overlay-title="Search Files: fsearch" { spawn "fsearch"; }
+    Mod+Alt+W hotkey-overlay-title="Next Wallpaper" { spawn-sh "dms ipc call wallpaper next"; }
     Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn-sh "$HOME/.config/niri/lock-and-dpms.sh"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
@@ -739,6 +740,7 @@ binds {
     Print { screenshot; }
     Ctrl+Print { screenshot-screen; }
     Alt+Print { screenshot-window; }
+    Mod+Print hotkey-overlay-title="Screenshot Region to Clipboard" { spawn-sh r#"grim -g "$(slurp)" - | wl-copy"#; }
 
     // Applications such as remote-desktop clients and software KVM switches may
     // request that niri stops processing the keyboard shortcuts defined here

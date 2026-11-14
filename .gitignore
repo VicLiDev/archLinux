@@ -1,5 +1,7 @@
-# DMS generates these niri snippets at runtime.
+# DMS generates these compositor/terminal snippets at runtime.
 cfg_niri/dms/
+cfg_hyprland/dms/
+cfg_kitty/dank-*.conf
 
 # DMS runtime files; settings.json is the tracked config.
 cfg_dms/.firstlaunch

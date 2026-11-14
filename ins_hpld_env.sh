@@ -102,6 +102,17 @@ COMMON_PKGS=(
   fcitx5-configtool
   fcitx5-nord
 
+  # 主题、动态配色与外观设置
+  adw-gtk-theme
+  papirus-icon-theme
+  matugen
+  cava
+  kimageformats
+  nwg-look
+  qt6ct
+  power-profiles-daemon
+  cups-pk-helper
+
   # 认证、portal、Qt 与显示管理器
   polkit-gnome
   xdg-desktop-portal-gtk

@@ -5,6 +5,12 @@
 #   ~/.config/hypr -> <仓库>/cfg_hyprland
 #   ~/.config/niri -> <仓库>/cfg_niri
 #   ~/.config/dms -> <仓库>/cfg_dms
+#   ~/.config/systemd/user/dms.service.d/10-path.conf
+#                       -> <仓库>/cfg_dms/dms.service.d/10-path.conf
+#   ~/.config/gtk-3.0/settings.ini -> <仓库>/cfg_gtk/gtk-3.0/settings.ini
+#   ~/.config/gtk-3.0/gtk.css -> <仓库>/cfg_gtk/gtk-3.0/gtk.css
+#   ~/.config/gtk-4.0/settings.ini -> <仓库>/cfg_gtk/gtk-4.0/settings.ini
+#   ~/.config/gtk-4.0/gtk.css -> <仓库>/cfg_gtk/gtk-4.0/gtk.css
 #   ~/.config/waybar -> <仓库>/cfg_waybar
 #   ~/.config/Thunar -> <仓库>/cfg_thunar
 #   ~/.config/dolphinrc -> <仓库>/cfg_dolphin/dolphinrc
@@ -15,6 +21,7 @@
 #   ~/.config/starship.toml -> <仓库>/cfg_starship.toml
 #   ~/.config/swaylock -> <仓库>/cfg_swaylock
 #   ~/.config/environment.d/10-fcitx5.conf -> <仓库>/cfg_environment.d/10-fcitx5.conf
+#   ~/.config/environment.d/20-qt.conf -> <仓库>/cfg_environment.d/20-qt.conf
 #   ~/.config/fcitx5/profile -> <仓库>/cfg_fcitx5/profile
 #   ~/.config/fcitx5/conf/classicui.conf -> <仓库>/cfg_fcitx5/conf/classicui.conf
 #   ~/.config/fcitx5/conf/pinyin.conf -> <仓库>/cfg_fcitx5/conf/pinyin.conf
@@ -47,6 +54,10 @@ CONFIG_LINKS=(
   "cfg_hyprland:hypr"
   "cfg_niri:niri"
   "cfg_dms:dms"
+  "cfg_gtk/gtk-3.0/settings.ini:gtk-3.0/settings.ini"
+  "cfg_gtk/gtk-3.0/gtk.css:gtk-3.0/gtk.css"
+  "cfg_gtk/gtk-4.0/settings.ini:gtk-4.0/settings.ini"
+  "cfg_gtk/gtk-4.0/gtk.css:gtk-4.0/gtk.css"
   "cfg_waybar:waybar"
   "cfg_thunar:Thunar"
   "cfg_dolphin/dolphinrc:dolphinrc"
@@ -55,6 +66,7 @@ CONFIG_LINKS=(
   "cfg_starship.toml:starship.toml"
   "cfg_swaylock:swaylock"
   "cfg_environment.d/10-fcitx5.conf:environment.d/10-fcitx5.conf"
+  "cfg_environment.d/20-qt.conf:environment.d/20-qt.conf"
   "cfg_fcitx5/profile:fcitx5/profile"
   "cfg_fcitx5/conf/classicui.conf:fcitx5/conf/classicui.conf"
   "cfg_fcitx5/conf/pinyin.conf:fcitx5/conf/pinyin.conf"
@@ -65,6 +77,7 @@ HOME_LINKS=(
   "cfg_zshrc:.zshrc"
   "cfg_dolphin/open-terminal.desktop:.local/share/kio/servicemenus/open-terminal.desktop"
   "cfg_fcitx5/themes/Alpha-black:.local/share/fcitx5/themes/Alpha-black"
+  "cfg_dms/dms.service.d/10-path.conf:.config/systemd/user/dms.service.d/10-path.conf"
 )
 
 function usage()
@@ -76,6 +89,16 @@ Symlink repo configs into ~/.config and ~:
   cfg_hyprland       -> ~/.config/hypr
   cfg_niri           -> ~/.config/niri
   cfg_dms            -> ~/.config/dms
+  cfg_dms/dms.service.d/10-path.conf
+                     -> ~/.config/systemd/user/dms.service.d/10-path.conf
+  cfg_gtk/gtk-3.0/settings.ini
+                     -> ~/.config/gtk-3.0/settings.ini
+  cfg_gtk/gtk-3.0/gtk.css
+                     -> ~/.config/gtk-3.0/gtk.css
+  cfg_gtk/gtk-4.0/settings.ini
+                     -> ~/.config/gtk-4.0/settings.ini
+  cfg_gtk/gtk-4.0/gtk.css
+                     -> ~/.config/gtk-4.0/gtk.css
   cfg_waybar         -> ~/.config/waybar
   cfg_thunar         -> ~/.config/Thunar
   cfg_dolphin/dolphinrc
@@ -88,6 +111,8 @@ Symlink repo configs into ~/.config and ~:
   cfg_swaylock       -> ~/.config/swaylock
   cfg_environment.d/10-fcitx5.conf
                      -> ~/.config/environment.d/10-fcitx5.conf
+  cfg_environment.d/20-qt.conf
+                     -> ~/.config/environment.d/20-qt.conf
   cfg_fcitx5/profile -> ~/.config/fcitx5/profile
   cfg_fcitx5/conf/classicui.conf
                      -> ~/.config/fcitx5/conf/classicui.conf
@@ -160,6 +185,10 @@ function main()
   # DMS 会缓存已加载的配置；正在运行时重启一次，确保使用仓库里的文件。
   if command -v systemctl >/dev/null 2>&1 \
       && systemctl --user is-active --quiet dms.service 2>/dev/null; then
+    log "Reloading systemd user units..."
+    if ! systemctl --user daemon-reload; then
+      log_warn "failed to reload systemd user units"
+    fi
     log "Restarting dms.service to apply linked config..."
     if ! systemctl --user restart dms.service; then
       log_warn "failed to restart dms.service"
