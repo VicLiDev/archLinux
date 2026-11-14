@@ -104,7 +104,11 @@ setopt ALWAYS_TO_END
 # ------------------------------------------------------------
 # 原有 bash 工具
 # ------------------------------------------------------------
-if [[ -r "${HOME}/bin/_source_cmd_tools.sh" ]]; then
+# pers_cfg.sh 内部会 source _source_cmd_tools.sh，只加载这一处，
+# 避免同一次启动重复初始化 conda 和重复定义函数。
+if [[ -f "${HOME}/bin/pers_cfg.sh" ]]; then
+  source "${HOME}/bin/pers_cfg.sh"
+elif [[ -r "${HOME}/bin/_source_cmd_tools.sh" ]]; then
   source "${HOME}/bin/_source_cmd_tools.sh"
 fi
 
@@ -198,18 +202,20 @@ if [[ -r /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.
 fi
 
 # >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/lhj/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/lhj/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/lhj/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/lhj/anaconda3/bin:$PATH"
-    fi
+# 工具脚本通常已经初始化过 conda；仅在尚未激活时再执行一次。
+if [[ -z "${CONDA_DEFAULT_ENV:-}" ]]; then
+  __conda_setup="$('/home/lhj/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+  if [ $? -eq 0 ]; then
+      eval "$__conda_setup"
+  else
+      if [ -f "/home/lhj/anaconda3/etc/profile.d/conda.sh" ]; then
+          . "/home/lhj/anaconda3/etc/profile.d/conda.sh"
+      else
+          export PATH="/home/lhj/anaconda3/bin:$PATH"
+      fi
+  fi
+  unset __conda_setup
 fi
-unset __conda_setup
 # <<< conda initialize <<<
 
 # ======================================================
@@ -225,5 +231,3 @@ unset __conda_setup
 # export proxyMihomoBin=${HOME}/.local/bin/mihomo
 # export ANDROID_ADB_SERVER_PORT=<adb_port>
 #-- export ADB_SERVER_SOCKET=tcp:127.0.0.1:<port>
-source ${HOME}/bin/_source_cmd_tools.sh
-[ -f ${HOME}/bin/pers_cfg.sh ] && source ${HOME}/bin/pers_cfg.sh
