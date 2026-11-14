@@ -247,6 +247,24 @@ function main()
   fi
   log_pass "niri desktop packages installed."
 
+  # DMS（Dux Shell）作为 niri 的桌面 Shell。已有 dms 命令时不再安装，
+  # 避免和 AUR 的 dms-shell-git 等提供者发生包冲突。
+  if ! command -v dms >/dev/null 2>&1; then
+    log "Installing DMS (Dux Shell)..."
+    if ! sudo pacman -S --needed --noconfirm dux-shell; then
+      log_fail "failed to install DMS"
+      return 1
+    fi
+  fi
+
+  # DMS 是用户级服务；注册后随 niri.service 自动启动。
+  if command -v dms >/dev/null 2>&1; then
+    log "Registering DMS user service..."
+    if ! dms systemd enable; then
+      log_warn "failed to register dms.service; run 'dms systemd enable' manually"
+    fi
+  fi
+
   log "Enabling NetworkManager and Bluetooth services..."
   if ! sudo systemctl enable --now NetworkManager; then
     log_fail "failed to enable NetworkManager"

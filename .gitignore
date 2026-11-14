@@ -1,2 +1,8 @@
 # DMS generates these niri snippets at runtime.
 cfg_niri/dms/
+
+# DMS runtime files; settings.json is the tracked config.
+cfg_dms/.firstlaunch
+cfg_dms/.changelog-*
+cfg_dms/*.bak-*
+cfg_dms/plugin_settings.json

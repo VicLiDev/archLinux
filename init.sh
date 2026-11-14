@@ -4,6 +4,7 @@
 #
 #   ~/.config/hypr -> <仓库>/cfg_hyprland
 #   ~/.config/niri -> <仓库>/cfg_niri
+#   ~/.config/dms -> <仓库>/cfg_dms
 #   ~/.config/waybar -> <仓库>/cfg_waybar
 #   ~/.config/Thunar -> <仓库>/cfg_thunar
 #   ~/.config/dolphinrc -> <仓库>/cfg_dolphin/dolphinrc
@@ -45,6 +46,7 @@ CONFIG_DIR="${XDG_CONFIG_HOME:-${HOME}/.config}"
 CONFIG_LINKS=(
   "cfg_hyprland:hypr"
   "cfg_niri:niri"
+  "cfg_dms:dms"
   "cfg_waybar:waybar"
   "cfg_thunar:Thunar"
   "cfg_dolphin/dolphinrc:dolphinrc"
@@ -73,6 +75,7 @@ Usage: ./init.sh [options]
 Symlink repo configs into ~/.config and ~:
   cfg_hyprland       -> ~/.config/hypr
   cfg_niri           -> ~/.config/niri
+  cfg_dms            -> ~/.config/dms
   cfg_waybar         -> ~/.config/waybar
   cfg_thunar         -> ~/.config/Thunar
   cfg_dolphin/dolphinrc
@@ -153,6 +156,15 @@ function main()
   for pair in "${HOME_LINKS[@]}"; do
     link_one "${SCRIPT_DIR}/${pair%%:*}" "${HOME}/${pair##*:}"
   done
+
+  # DMS 会缓存已加载的配置；正在运行时重启一次，确保使用仓库里的文件。
+  if command -v systemctl >/dev/null 2>&1 \
+      && systemctl --user is-active --quiet dms.service 2>/dev/null; then
+    log "Restarting dms.service to apply linked config..."
+    if ! systemctl --user restart dms.service; then
+      log_warn "failed to restart dms.service"
+    fi
+  fi
 
   log "Done. Linked configs take effect immediately."
 }
