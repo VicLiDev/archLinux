@@ -111,6 +111,9 @@ input {
 cursor {
     xcursor-theme "Pop"
     xcursor-size 24
+
+    // 打字时自动隐藏指针，减少视觉干扰。
+    hide-when-typing
 }
 
 // Settings that influence how windows are positioned and sized.
@@ -129,7 +132,10 @@ layout {
     // - "always", the focused column will always be centered.
     // - "on-overflow", focusing a column will center it if it doesn't fit
     //   together with the previously focused column.
-    center-focused-column "never"
+    center-focused-column "on-overflow"
+
+    // 只有一列时也居中，窗口不会贴在左侧。
+    always-center-single-column
 
     // You can customize the widths that "switch-preset-column-width" (Mod+R) toggles between.
     preset-column-widths {
@@ -169,7 +175,7 @@ layout {
         // off
 
         // How many logical pixels the ring extends out from the windows.
-        width 4
+        width 3
 
         // Colors can be set in a variety of ways:
         // - CSS named colors: "red"
@@ -177,13 +183,16 @@ layout {
         // - CSS-like notation: "rgb(255, 127, 0)", rgba(), hsl() and a few others.
 
         // Color of the ring on the active monitor.
-        active-color "#7fc8ff"
+        active-color "#89b4fa"
+
+        // Catppuccin blue -> lavender gradient for the focused window.
+        active-gradient from="#89b4fa" to="#cba6f7" angle=45
 
         // Color of the ring on inactive monitors.
         //
         // The focus ring only draws around the active window, so the only place
         // where you can see its inactive-color is on other monitors.
-        inactive-color "#505050"
+        inactive-color "#45475a"
 
         // You can also use gradients. They take precedence over solid colors.
         // Gradients are rendered the same as CSS linear-gradient(angle, from, to).
@@ -259,6 +268,25 @@ layout {
         color "#0007"
     }
 
+    // 标签页指示器使用与焦点环一致的配色。
+    tab-indicator {
+        hide-when-single-tab
+        place-within-column
+        gap 6
+        width 3
+        length total-proportion=1.0
+        position "left"
+        gaps-between-tabs 2
+        corner-radius 8
+        active-gradient from="#89b4fa" to="#cba6f7" angle=45
+        inactive-color "#45475a"
+    }
+
+    // 调整窗口插入位置时的提示色。
+    insert-hint {
+        color "#89b4fa80"
+    }
+
     // Struts shrink the area occupied by windows, similarly to layer-shell panels.
     // You can think of them as a kind of outer gaps. They are set in logical pixels.
     // Left and right struts will cause the next window to the side to always be visible.
@@ -296,7 +324,8 @@ hotkey-overlay {
 // Additionally, clients will be informed that they are tiled, removing some client-side rounded corners.
 // This option will also fix border/focus ring drawing behind some semitransparent windows.
 // After enabling or disabling this, you need to restart the apps for this to take effect.
-// prefer-no-csd
+// 让支持的服务端装饰应用去掉 CSD，圆角和阴影更统一。
+prefer-no-csd
 
 // You can change the path where screenshots are saved.
 // A ~ at the front will be expanded to the home directory.
@@ -311,27 +340,36 @@ screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 // https://niri-wm.github.io/niri/Configuration:-Animations
 animations {
     window-open {
-        duration-ms 220
+        duration-ms 240
         curve "ease-out-expo"
     }
     window-close {
-        duration-ms 180
+        duration-ms 190
         curve "ease-out-quad"
     }
     workspace-switch {
         spring damping-ratio=1.0 stiffness=900 epsilon=0.0001
     }
     horizontal-view-movement {
-        spring damping-ratio=1.0 stiffness=700 epsilon=0.0001
+        spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
     }
     window-movement {
-        spring damping-ratio=1.0 stiffness=700 epsilon=0.0001
+        spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
     }
     window-resize {
-        spring damping-ratio=1.0 stiffness=700 epsilon=0.0001
+        spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
+    }
+    config-notification-open-close {
+        spring damping-ratio=0.9 stiffness=900 epsilon=0.001
+    }
+    exit-confirmation-open-close {
+        spring damping-ratio=0.8 stiffness=600 epsilon=0.01
     }
     overview-open-close {
         spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
+    }
+    recent-windows-close {
+        spring damping-ratio=1.0 stiffness=800 epsilon=0.001
     }
     screenshot-ui-open {
         duration-ms 200
@@ -345,6 +383,19 @@ blur {
     offset 3.0
     noise 0.02
     saturation 1.5
+}
+
+// Overview 使用与桌面一致的深色背景和柔和阴影。
+overview {
+    zoom 0.5
+    backdrop-color "#1e1e2e"
+
+    workspace-shadow {
+        softness 50
+        spread 12
+        offset x=0 y=12
+        color "#00000060"
+    }
 }
 
 // Window rules let you adjust behavior for individual windows.
@@ -405,6 +456,14 @@ layer-rule {
     }
 }
 
+// 启动器背景也做轻微模糊，和顶部栏保持统一。
+layer-rule {
+    match namespace="^fuzzel$"
+    background-effect {
+        blur true
+    }
+}
+
 binds {
     // Keys consist of modifiers separated by + signs, followed by an XKB key name
     // in the end. To find an XKB name for a particular key, you may use a program
@@ -460,6 +519,7 @@ binds {
     // You can also move the mouse into the top-left hot corner,
     // or do a four-finger swipe up on a touchpad.
     Mod+O repeat=false { toggle-overview; }
+    Mod+Tab repeat=false { toggle-overview; }
 
     Mod+Q repeat=false { close-window; }
 
