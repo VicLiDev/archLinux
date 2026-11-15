@@ -4,6 +4,141 @@
 [[ -o interactive ]] || return 0
 
 # ------------------------------------------------------------
+# 登录提示
+# ------------------------------------------------------------
+# 每个新的交互式终端显示一次。
+function _show_arch_banner()
+{
+  local -a logo=(
+    '                   -`'
+    '                  .o+`'
+    '                 `ooo/'
+    '                `+oooo:'
+    '               `+oooooo:'
+    '               -+oooooo+:'
+    '             `/:-:++oooo+:'
+    '            `/++++/+++++++:'
+    '           `/++++++++++++++:'
+    '          `/+++ooooooooooooo/`'
+    '         ./ooosssso++osssssso+`'
+    '        .oossssso-````/ossssss+`'
+    '       -osssssso.      :ssssssso.'
+    '      :osssssss/        osssso+++.'
+    '     /ossssssss/        +ssssooo/-'
+    '   `/ossssso+/:-        -:/+osssso+-'
+    '  `+sso+:-`                 `.-/+oso:'
+    ' `++:.                           `-/+'
+    ' .`                                 `/'
+  )
+
+  local cols="${COLUMNS:-0}"
+  if (( cols <= 0 )); then
+    cols=$(tput cols 2>/dev/null)
+    cols="${cols:-80}"
+  fi
+
+  if (( cols < 48 )); then
+    printf '\033[1;38;2;125;207;255m  Arch Linux\033[0m\n'
+    return
+  fi
+
+  local show_info=0
+  (( cols >= 80 )) && show_info=1
+
+  local -a labels values
+  if (( show_info )); then
+    local term_name="${TERM:-terminal}"
+    [[ "${term_name}" == "xterm-kitty" ]] && term_name='kitty'
+
+    local wm='Wayland'
+    if [[ -n "${NIRI_SOCKET}" || "${XDG_CURRENT_DESKTOP:-}" == *niri* ]]; then
+      wm='niri'
+    elif [[ -n "${HYPRLAND_INSTANCE_SIGNATURE}" || "${XDG_CURRENT_DESKTOP:-}" == *Hyprland* ]]; then
+      wm='Hyprland'
+    fi
+
+    local up='unknown'
+    if (( ${+commands[uptime]} )); then
+      up="$(uptime -p 2>/dev/null)"
+      up="${up#up }"
+      [[ -z "${up}" ]] && up='unknown'
+    fi
+
+    labels=( 'OS' 'Host' 'Kernel' 'Shell' 'Terminal' 'WM' 'Theme' 'Uptime' 'Date' )
+    values=(
+      'Arch Linux'
+      "$(uname -n)"
+      "$(uname -r)"
+      "zsh ${ZSH_VERSION}"
+      "${term_name}"
+      "${wm}"
+      'DMS + Material 3'
+      "${up}"
+      "$(date '+%Y-%m-%d %H:%M')"
+    )
+  fi
+
+  local width=40
+  (( show_info )) && width=79
+  local pad=$(( (cols - width) / 2 ))
+  (( pad < 0 )) && pad=0
+
+  local i pos seg frac r g b line
+  local n=${#logo}
+  local -a info_labels info_values
+  info_labels=( "${labels[@]}" )
+  info_values=( "${values[@]}" )
+
+  # 冷色霓虹渐变：天蓝 -> 蓝 -> 淡紫 -> 粉。
+  local -a sr=( 125 122 187 255 )
+  local -a sg=( 207 162 154 121 )
+  local -a sb=( 255 247 247 198 )
+  local stops=${#sr}
+  local maxpos=$(( (stops - 1) * 100 ))
+
+  for (( i = 0; i < n; i++ )); do
+    pos=$(( i * maxpos / (n - 1) ))
+    seg=$(( pos / 100 ))
+    frac=$(( pos % 100 ))
+    if (( seg >= stops - 1 )); then
+      seg=$(( stops - 2 ))
+      frac=100
+    fi
+
+    r=$(( sr[seg + 1] + (sr[seg + 2] - sr[seg + 1]) * frac / 100 ))
+    g=$(( sg[seg + 1] + (sg[seg + 2] - sg[seg + 1]) * frac / 100 ))
+    b=$(( sb[seg + 1] + (sb[seg + 2] - sb[seg + 1]) * frac / 100 ))
+
+    line="${logo[i + 1]}"
+    printf '%*s\033[1;38;2;%d;%d;%dm%-40s\033[0m' \
+      "${pad}" '' "${r}" "${g}" "${b}" "${line}"
+
+    if (( show_info )); then
+      printf '  \033[38;2;%d;%d;%dm│\033[0m  ' "${r}" "${g}" "${b}"
+      if (( i == 0 )); then
+        printf '\033[1;38;2;255;255;255m Arch Linux\033[0m'
+      elif (( i == 1 )); then
+        printf '\033[1;38;2;255;121;198m──────────────\033[0m'
+      else
+        local j=$(( i - 1 ))
+        if (( j >= 1 && j <= ${#info_labels[@]} )); then
+          printf '\033[1;38;2;%d;%d;%dm%-8s\033[0m \033[38;2;255;255;255m%s\033[0m' \
+            "${r}" "${g}" "${b}" "${info_labels[j]}" "${info_values[j]}"
+        fi
+      fi
+    fi
+
+    printf '\n'
+  done
+
+  printf '\033[0m\n'
+}
+
+if [[ -t 1 ]]; then
+  _show_arch_banner
+fi
+
+# ------------------------------------------------------------
 # 历史记录
 # ------------------------------------------------------------
 HISTFILE="${HOME}/.zsh_history"
