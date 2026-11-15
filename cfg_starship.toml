@@ -7,10 +7,7 @@ $os\
 $username\
 [](bg:peach fg:red)\
 $directory\
-[](bg:yellow fg:peach)\
-$git_branch\
-$git_status\
-[](fg:yellow bg:green)\
+$custom\
 $c\
 $rust\
 $golang\
@@ -21,11 +18,10 @@ $java\
 $kotlin\
 $haskell\
 $python\
-[ ](fg:green)\
 $line_break\
 $character"""
 
-right_format = '[](fg:lavender)$status$cmd_duration$conda$hostname$time[ ](fg:lavender)'
+right_format = '[](fg:lavender bg:base)$status$cmd_duration$conda$hostname$time[](fg:lavender bg:base)'
 
 palette = 'catppuccin_mocha'
 
@@ -78,50 +74,118 @@ truncation_symbol = "…/"
 
 [git_branch]
 symbol = ""
-style = "bg:yellow"
-format = '[[ $symbol $branch ](fg:crust bg:yellow)]($style)'
+style = "fg:yellow"
+format = '[ $symbol $branch ]($style)'
 
 [git_status]
-style = "bg:yellow"
-format = '[[($all_status$ahead_behind )](fg:crust bg:yellow)]($style)'
+style = "fg:yellow"
+format = '[($all_status$ahead_behind )]($style)'
 modified = '!${count}'
 staged = '+${count}'
 untracked = '?${count}'
 
+[custom.git_transition]
+# Git 仓库里用尖角接上目录块，不再额外加左半圆。
+when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
+command = "printf x"
+format = '[](fg:peach bg:yellow)'
+
+[custom.git_pill]
+# 只在 Git 仓库里出现；整个黄色胶囊随模块一起出现或消失。
+when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
+command = '''
+branch=$(git branch --show-current 2>/dev/null)
+if [ -z "$branch" ]; then
+  branch=$(git rev-parse --short HEAD 2>/dev/null)
+fi
+[ -z "$branch" ] && exit 1
+
+counts=$(git status --porcelain=v1 2>/dev/null)
+modified=$(printf '%s\n' "$counts" | awk '/^.[MTRC]/ { n++ } END { print n+0 }')
+staged=$(printf '%s\n' "$counts" | awk '/^[MADRC]/ { n++ } END { print n+0 }')
+untracked=$(printf '%s\n' "$counts" | awk '/^[?][?]/ { n++ } END { print n+0 }')
+
+ahead=''
+behind=''
+ab=$(git status --porcelain=v2 --branch 2>/dev/null | awk '/^# branch.ab / { print $3, $4; exit }')
+if [ -n "$ab" ]; then
+  ahead=${ab%% *}
+  behind=${ab##* }
+fi
+
+out="$branch"
+[ "$modified" -gt 0 ] && out="$out !$modified"
+[ "$staged" -gt 0 ] && out="$out +$staged"
+[ "$untracked" -gt 0 ] && out="$out ?$untracked"
+if [ -n "$ahead" ] && [ "$ahead" != "+0" ]; then
+  out="$out ⇡${ahead#+}"
+fi
+if [ -n "$behind" ] && [ "$behind" != "-0" ]; then
+  out="$out ⇣${behind#-}"
+fi
+
+printf '%s' "$out"
+'''
+format = '[  $output ](bg:yellow fg:crust)'
+
+[custom.git_to_lang]
+# Git 后面还有语言模块时，用尖角过渡到语言文本。
+when = '''lang=0; git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 1; for f in package.json Cargo.toml go.mod composer.json pom.xml build.gradle build.gradle.kts pyproject.toml requirements.txt setup.py stack.yaml bun.lock bun.lockb bunfig.toml; do if [ -f "$f" ]; then lang=1; break; fi; done || true; if [ -n "$(find . -maxdepth 1 -type f \( -name "*.c" -o -name "*.h" -o -name "*.rs" -o -name "*.go" -o -name "*.js" -o -name "*.ts" -o -name "*.php" -o -name "*.java" -o -name "*.kt" -o -name "*.kts" -o -name "*.hs" -o -name "*.py" \) -print -quit 2>/dev/null)" ]; then lang=1; fi; [ "$lang" -eq 1 ]'''
+command = "printf x"
+format = '[](fg:base bg:yellow)'
+
+[custom.git_end]
+# Git 后面没有语言模块时，黄色块自己收尾。
+when = '''lang=0; git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 1; for f in package.json Cargo.toml go.mod composer.json pom.xml build.gradle build.gradle.kts pyproject.toml requirements.txt setup.py stack.yaml bun.lock bun.lockb bunfig.toml; do if [ -f "$f" ]; then lang=1; break; fi; done || true; if [ -n "$(find . -maxdepth 1 -type f \( -name "*.c" -o -name "*.h" -o -name "*.rs" -o -name "*.go" -o -name "*.js" -o -name "*.ts" -o -name "*.php" -o -name "*.java" -o -name "*.kt" -o -name "*.kts" -o -name "*.hs" -o -name "*.py" \) -print -quit 2>/dev/null)" ]; then lang=1; fi; [ "$lang" -eq 0 ]'''
+command = "printf x"
+format = '[](fg:yellow bg:base)'
+
+[custom.dir_to_lang]
+# 不在 Git 仓库但存在语言项目时，目录直接过渡到语言文本。
+when = '''lang=0; ! git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 1; for f in package.json Cargo.toml go.mod composer.json pom.xml build.gradle build.gradle.kts pyproject.toml requirements.txt setup.py stack.yaml bun.lock bun.lockb bunfig.toml; do if [ -f "$f" ]; then lang=1; break; fi; done || true; if [ -n "$(find . -maxdepth 1 -type f \( -name "*.c" -o -name "*.h" -o -name "*.rs" -o -name "*.go" -o -name "*.js" -o -name "*.ts" -o -name "*.php" -o -name "*.java" -o -name "*.kt" -o -name "*.kts" -o -name "*.hs" -o -name "*.py" \) -print -quit 2>/dev/null)" ]; then lang=1; fi; [ "$lang" -eq 1 ]'''
+command = "printf x"
+format = '[](fg:base bg:peach)'
+
+[custom.dir_end]
+# 不在 Git 仓库、也没有语言项目时，目录块正常收尾。
+when = '''lang=0; ! git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 1; for f in package.json Cargo.toml go.mod composer.json pom.xml build.gradle build.gradle.kts pyproject.toml requirements.txt setup.py stack.yaml bun.lock bun.lockb bunfig.toml; do if [ -f "$f" ]; then lang=1; break; fi; done || true; if [ -n "$(find . -maxdepth 1 -type f \( -name "*.c" -o -name "*.h" -o -name "*.rs" -o -name "*.go" -o -name "*.js" -o -name "*.ts" -o -name "*.php" -o -name "*.java" -o -name "*.kt" -o -name "*.kts" -o -name "*.hs" -o -name "*.py" \) -print -quit 2>/dev/null)" ]; then lang=1; fi; [ "$lang" -eq 0 ]'''
+command = "printf x"
+format = '[](fg:peach bg:base)'
+
 [nodejs]
 symbol = ""
-style = "bg:green"
-format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
+style = "fg:green"
+format = '[ $symbol( $version) ]($style)'
 
 [bun]
 symbol = ""
-style = "bg:green"
-format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
+style = "fg:green"
+format = '[ $symbol( $version) ]($style)'
 
 [c]
 symbol = " "
-style = "bg:green"
-format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
+style = "fg:green"
+format = '[ $symbol( $version) ]($style)'
 
 [rust]
 symbol = ""
-style = "bg:green"
-format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
+style = "fg:green"
+format = '[ $symbol( $version) ]($style)'
 
 [golang]
 symbol = ""
-style = "bg:green"
-format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
+style = "fg:green"
+format = '[ $symbol( $version) ]($style)'
 
 [php]
 symbol = ""
-style = "bg:green"
-format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
+style = "fg:green"
+format = '[ $symbol( $version) ]($style)'
 
 [java]
 symbol = " "
-style = "bg:green"
-format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
+style = "fg:green"
+format = '[ $symbol( $version) ]($style)'
 
 [jj_bookmark]
 symbol = ""
@@ -134,18 +198,18 @@ format = '[[($all )](fg:crust bg:yellow)]($style)'
 
 [kotlin]
 symbol = ""
-style = "bg:green"
-format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
+style = "fg:green"
+format = '[ $symbol( $version) ]($style)'
 
 [haskell]
 symbol = ""
-style = "bg:green"
-format = '[[ $symbol( $version) ](fg:crust bg:green)]($style)'
+style = "fg:green"
+format = '[ $symbol( $version) ]($style)'
 
 [python]
 symbol = ""
-style = "bg:green"
-format = '[[ $symbol( $version)(\(#$virtualenv\)) ](fg:crust bg:green)]($style)'
+style = "fg:green"
+format = '[ $symbol( $version)(\(#$virtualenv\)) ]($style)'
 
 [docker_context]
 symbol = ""
@@ -181,12 +245,12 @@ disabled = true
 
 [character]
 disabled = false
-success_symbol = '[❯](bold fg:green)'
-error_symbol = '[❯](bold fg:red)'
-vimcmd_symbol = '[❮](bold fg:green)'
-vimcmd_replace_one_symbol = '[❮](bold fg:lavender)'
-vimcmd_replace_symbol = '[❮](bold fg:lavender)'
-vimcmd_visual_symbol = '[❮](bold fg:yellow)'
+success_symbol = '[❯](bold fg:green bg:base)'
+error_symbol = '[❯](bold fg:red bg:base)'
+vimcmd_symbol = '[❮](bold fg:green bg:base)'
+vimcmd_replace_one_symbol = '[❮](bold fg:lavender bg:base)'
+vimcmd_replace_symbol = '[❮](bold fg:lavender bg:base)'
+vimcmd_visual_symbol = '[❮](bold fg:yellow bg:base)'
 
 [cmd_duration]
 show_milliseconds = false
